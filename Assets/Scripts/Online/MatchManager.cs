@@ -10,11 +10,7 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
 {
     public static MatchManager Instance;
 
-    private void Awake()
-    {
-        Instance = this;
-    }
-
+    #region Variables
     public enum EventCodes : byte
     {
         NewPlayer,
@@ -31,21 +27,27 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
         Ending
     }
 
-    public int KillToWin = 3;
-    public Transform MapCamPoint;
     public GameStates State = GameStates.Waiting;
-    public float waitAfterEnding = 5f;
 
+    public Transform MapCamPoint;
+    public float waitAfterEnding = 5f;
+    public float MatchLenght = 300f;
+    public int KillToWin = 3;
     public bool Perpetual;
 
-    public float MatchLenght = 300f;
+    [SerializeField] private List<PlayerInfo> _allPlayers = new List<PlayerInfo>();
+    private List<LeadeboardPlayer> lboardPlayers = new List<LeadeboardPlayer>();
+
+    private int index;
     private float _currentMatchTime;
     private float _sendTimer;
+    #endregion
 
-    [SerializeField] private List<PlayerInfo> _allPlayers = new List<PlayerInfo>();
-    private int index;
-
-    private List<LeadeboardPlayer> lboardPlayers = new List<LeadeboardPlayer>();
+    #region Native Functions
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     private void Start()
     {
@@ -153,6 +155,7 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
             }
         }
     }
+    #endregion
 
     public override void OnEnable()
     {

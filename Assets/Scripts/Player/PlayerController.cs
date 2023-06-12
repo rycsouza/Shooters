@@ -2,9 +2,11 @@ using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
 using System.Collections;
+using TMPro;
 
 public class PlayerController : MonoBehaviourPunCallbacks
 {
+    #region Variables
     public bool InvertLook = false;
 
     [Header("Player Skin")]
@@ -14,6 +16,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
     [SerializeField] private CharacterController _characterController;
     [SerializeField] private GameObject _playerHitImpact;
     [SerializeField] private GameObject _playerModel;
+    [SerializeField] private GameObject _canvasPlayerName;
+    [SerializeField] private TMP_Text _playerName;
 
     [Header("Player Health")]
     [SerializeField] private int _maxHealth = 100;
@@ -50,6 +54,11 @@ public class PlayerController : MonoBehaviourPunCallbacks
     private float _shotCounter;
     private bool _overHeated;
 
+    [Header("Audio")]
+    [SerializeField] private AudioSource _impactSound;
+    #endregion
+
+    #region Native Functions
     private void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
@@ -72,6 +81,9 @@ public class PlayerController : MonoBehaviourPunCallbacks
             UIController.Instance.HealthSlider.maxValue = _maxHealth;
             UIController.Instance.HealthSlider.value = _currentHealth;
             UIController.Instance.HealthValue.text = _currentHealth.ToString();
+
+            _playerName.text = PhotonNetwork.LocalPlayer.NickName;
+
         }
         else
         {
@@ -81,6 +93,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         }
 
         _playerModel.GetComponent<Renderer>().material = _allSkins[photonView.Owner.ActorNumber % _allSkins.Length];
+
     }
 
     private void Update()
@@ -112,12 +125,13 @@ public class PlayerController : MonoBehaviourPunCallbacks
                 if (Input.GetMouseButtonDown(0) && !UIController.Instance.ConfigPanel.activeInHierarchy)
                 {
                     Cursor.lockState = CursorLockMode.Locked;
-                    if (!_overHeated) _allGuns[_selectedGun].MuzzleFlash.SetActive(true);
                 }
             }
 
             _mouseSensitivity = UIController.Instance.MouseSensitivity.value;
             UIController.Instance.MouseSensitivyValue.text = _mouseSensitivity.ToString("0.0");
+
+            _canvasPlayerName.transform.LookAt(photonView.transform);
         }
     }
 
@@ -133,11 +147,9 @@ public class PlayerController : MonoBehaviourPunCallbacks
             {
                 _cam.transform.SetPositionAndRotation(MatchManager.Instance.MapCamPoint.position, MatchManager.Instance.MapCamPoint.rotation);
             }
-
-            _allGuns[_selectedGun].MuzzleFlash.SetActive(false);
         }
     }
-
+    #endregion
     private void PlayerVision()
     {
         _mouseInput = new Vector2(Input.GetAxisRaw("Mouse X") * _mouseSensitivity, Input.GetAxisRaw("Mouse Y")) * _mouseSensitivity;
@@ -306,6 +318,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
     {
         if (photonView.IsMine)
         {
+            if(!_impactSound.isPlaying) _impactSound.Play();
+
             _currentHealth -= damageAmount;
             if (_currentHealth <= 0)
             {

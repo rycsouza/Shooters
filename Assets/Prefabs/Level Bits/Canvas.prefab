@@ -4071,6 +4071,9 @@ MonoBehaviour:
   MouseSensitivyValue: {fileID: 752508646938626133}
   AudioVolume: {fileID: 5857212273246571364}
   AudioVolumeValue: {fileID: 8901024899006416088}
+  OtherPlayerName: {fileID: 0}
+  StartLimitX: {fileID: 0}
+  FinalLimitX: {fileID: 0}
 --- !u!1 &7751266043872047394
 GameObject:
   m_ObjectHideFlags: 0

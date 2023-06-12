@@ -9,31 +9,29 @@ public class UIController : MonoBehaviour
 {
     public static UIController Instance;
 
-    public GameObject Crosshair;
-    public Slider WeaponSlider;
-
-    public Slider HealthSlider;
-    public TMP_Text HealthValue;
-
-    public GameObject DeathScreen;
-    public TMP_Text DeathText;
-
+    public LeadeboardPlayer LeadeboardPlayerDisplay;
+    
     public List<Sprite> CrosshairList;
 
-    public TMP_Text Kills, Deaths;
-
+    [Header("GameObject")]
+    public GameObject Crosshair;
+    public GameObject ConfigPanel;
+    public GameObject DeathScreen;
     public GameObject Leaderboard;
-    public LeadeboardPlayer LeadeboardPlayerDisplay;
-
     public GameObject EndGameScreen;
 
-    public TMP_Text Timer;
-
-    public GameObject ConfigPanel;
-
+    [Header("Slider")]
+    public Slider WeaponSlider;
+    public Slider HealthSlider;
     public Slider MouseSensitivity;
-    public TMP_Text MouseSensitivyValue;
     public Slider AudioVolume;
+
+    [Header("Text")]
+    public TMP_Text HealthValue;
+    public TMP_Text DeathText;
+    public TMP_Text Kills, Deaths;
+    public TMP_Text Timer;
+    public TMP_Text MouseSensitivyValue;
     public TMP_Text AudioVolumeValue;
 
     private void Awake()

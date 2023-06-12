@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "firebase_url": "null",
+    "project_number": "334085570309",
+    "project_id": "x1play",
+    "storage_bucket": "x1play.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:334085570309:android:e7cbb9246cf9cbd4f1416c",
+        "android_client_info": {
+          "package_name": "com.UnityTechnologies.com.unity.template.urpblank"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "334085570309-rfssnr3gbhldjmtt6ser3o3cqnf674mc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNdssMwm-OPSFJDy9EOf9-8pG4fnuHf2o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "334085570309-rfssnr3gbhldjmtt6ser3o3cqnf674mc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

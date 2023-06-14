@@ -34,6 +34,7 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
     public float MatchLenght = 300f;
     public int KillToWin = 3;
     public bool Perpetual;
+    public List<GameObject> _allItensDroped;
 
     [SerializeField] private List<PlayerInfo> _allPlayers = new List<PlayerInfo>();
     private List<LeadeboardPlayer> lboardPlayers = new List<LeadeboardPlayer>();

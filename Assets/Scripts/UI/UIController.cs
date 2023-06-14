@@ -63,6 +63,7 @@ public class UIController : MonoBehaviour
         {
             ConfigPanel.SetActive(false);
             Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
         }
     }
 

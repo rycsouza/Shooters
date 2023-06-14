@@ -18,6 +18,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject _playerModel;
     [SerializeField] private GameObject _canvasPlayerName;
     [SerializeField] private TMP_Text _playerName;
+    [SerializeField] private Transform _head, _endHead;
 
     [Header("Player Health")]
     [SerializeField] private int _maxHealth = 100;
@@ -50,12 +51,17 @@ public class PlayerController : MonoBehaviourPunCallbacks
     [SerializeField] private float _maxHeat = 10f, _coolRate = 4f, _overHeatCoolRate = 5f;
     [SerializeField] private Gun[] _allGuns;
     [SerializeField] private Transform _adsInPoint, _adsOutPoint;
-    private int _selectedGun;
+    [SerializeField] private Transform[] _allTransforms;
+    private int _selectedGun = 1;
     private float _shotCounter;
     private bool _overHeated;
 
     [Header("Audio")]
     [SerializeField] private AudioSource _impactSound;
+
+    [Header("Drop")]
+    [SerializeField] private PowerUp[] _allDrops;
+    private int _selectedDrop;
     #endregion
 
     #region Native Functions
@@ -94,6 +100,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
         _playerModel.GetComponent<Renderer>().material = _allSkins[photonView.Owner.ActorNumber % _allSkins.Length];
 
+        _playerName.text = photonView.Owner.NickName;
     }
 
     private void Update()
@@ -116,22 +123,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
                 _gunHolder.position = _adsOutPoint.position;
             }
 
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                Cursor.lockState = CursorLockMode.None;
-            }
-            else if (Cursor.lockState == CursorLockMode.None)
-            {
-                if (Input.GetMouseButtonDown(0) && !UIController.Instance.ConfigPanel.activeInHierarchy)
-                {
-                    Cursor.lockState = CursorLockMode.Locked;
-                }
-            }
-
             _mouseSensitivity = UIController.Instance.MouseSensitivity.value;
             UIController.Instance.MouseSensitivyValue.text = _mouseSensitivity.ToString("0.0");
-
-            _canvasPlayerName.transform.LookAt(photonView.transform);
         }
     }
 
@@ -150,6 +143,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         }
     }
     #endregion
+
     private void PlayerVision()
     {
         _mouseInput = new Vector2(Input.GetAxisRaw("Mouse X") * _mouseSensitivity, Input.GetAxisRaw("Mouse Y")) * _mouseSensitivity;
@@ -202,18 +196,42 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     private void Shoot()
     {
+        _allGuns[_selectedGun].CallMuzzleFlash();
+
         Ray ray = _cam.ViewportPointToRay(new Vector3(.5f, .5f, 0f));
         ray.origin = _cam.transform.position;
 
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
+            if (_allGuns[_selectedGun].name == "Gun 1 - ShotGun")
+            {
+                hit.distance = _allGuns[_selectedGun].ShootRange.position.x;
+                if (hit.collider.name != _allGuns[_selectedGun].ShootRange.name && hit.collider.gameObject.tag != "Player")
+                {
+                    for (int i = 1; i < _allTransforms.Length; i++)
+                    {
+
+                        GameObject bulletImpact = Instantiate(_bulletPrefab, (new Vector3(_allTransforms[i].position.x, _allTransforms[i].position.y, _allTransforms[i].position.z + 1f)) + (hit.normal * .002f), Quaternion.LookRotation(Vector3.forward, Vector3.up));
+
+                        Destroy(bulletImpact, 5f);
+                    }
+                }
+                else if(hit.collider.name != _allGuns[_selectedGun].ShootRange.name && hit.collider.gameObject.CompareTag("Player"))
+                {
+                    for (int i = 1; i < _allTransforms.Length; i++)
+                    {
+                        PhotonNetwork.Instantiate(_playerHitImpact.name, (new Vector3(_allTransforms[i].position.x, _allTransforms[i].position.y, _allTransforms[i].position.z + 1f)), Quaternion.identity);
+                    }
+                }
+
+            }
             if (hit.collider.gameObject.CompareTag("Player"))
             {
                 PhotonNetwork.Instantiate(_playerHitImpact.name, hit.point, Quaternion.identity);
 
                 hit.collider.gameObject.GetPhotonView().RPC("DealDamage", RpcTarget.All, photonView.Owner.NickName, _allGuns[_selectedGun].ShotDamage, PhotonNetwork.LocalPlayer.ActorNumber);
             }
-            else
+            else if (hit.collider.name != _allGuns[_selectedGun].ShootRange.name)
             {
                 GameObject bulletImpact = Instantiate(_bulletPrefab, hit.point + (hit.normal * .002f), Quaternion.LookRotation(Vector3.forward, Vector3.up));
 
@@ -314,17 +332,48 @@ public class PlayerController : MonoBehaviourPunCallbacks
         }
     }
 
+    public void DropManager(PowerUp.Type type)
+    {
+        if (!photonView.IsMine) return;
+        if (type == PowerUp.Type.Reload)
+        {
+            foreach (Gun gun in _allGuns)
+            {
+                gun.HeatCounter = 0f;
+                gun.LastHeatCounter = 0f;
+                _overHeated = false;
+                UIController.Instance.Crosshair.GetComponent<Image>().sprite = UIController.Instance.CrosshairList[1];
+            }
+            return;
+        }
+        if (type == PowerUp.Type.Health)
+        {
+            if (_currentHealth < _maxHealth) _currentHealth = 30;
+            else if (_currentHealth == _maxHealth && _maxHealth < 150)
+            {
+                _maxHealth += 10;
+                UIController.Instance.HealthSlider.maxValue = _maxHealth;
+                _currentHealth = _maxHealth;
+                UIController.Instance.HealthSlider.value = _currentHealth;
+                UIController.Instance.HealthValue.text = _currentHealth.ToString();
+            }
+            else { return; }
+            return;
+        }
+    }
+
     public void TakeDamage(string damager, int damageAmount, int actor)
     {
         if (photonView.IsMine)
         {
-            if(!_impactSound.isPlaying) _impactSound.Play();
+            if (!_impactSound.isPlaying) _impactSound.Play();
 
             _currentHealth -= damageAmount;
             if (_currentHealth <= 0)
             {
                 _currentHealth = 0;
-                PlayerSpawner.Instance.Die(damager);
+                _selectedDrop = Random.Range(0, _allDrops.Length);
+                PlayerSpawner.Instance.Die(damager, _allDrops[_selectedDrop].gameObject);
 
                 MatchManager.Instance.UpdateStatsSend(actor, 0, 1);
             }

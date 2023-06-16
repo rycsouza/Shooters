@@ -9,6 +9,7 @@ public class PlayerSpawner : MonoBehaviour
 
     [SerializeField] private GameObject _playerPrefab;
     [SerializeField] private GameObject _deathEffect;
+    [SerializeField] private PowerUp[] _allDrops;
 
     private GameObject _player;
 
@@ -41,6 +42,7 @@ public class PlayerSpawner : MonoBehaviour
     public IEnumerator DieCoroutine()
     {
         PhotonNetwork.Instantiate(_deathEffect.name, _player.transform.position, Quaternion.identity);
+        PhotonNetwork.Instantiate(_allDrops[Random.Range(0, _allDrops.Length)].name, _player.transform.position, _player.transform.rotation);
 
         PhotonNetwork.Destroy(_player);
         _player = null;

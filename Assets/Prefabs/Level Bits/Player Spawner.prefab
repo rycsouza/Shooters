@@ -48,3 +48,6 @@ MonoBehaviour:
     type: 3}
   _deathEffect: {fileID: 7141676911629108955, guid: 7d83a142c0a073f4da63ea61703e1be4,
     type: 3}
+  _allDrops:
+  - {fileID: -2835335384712429054, guid: 0ec216d72bc7cb3449d113552f66440c, type: 3}
+  - {fileID: -5271240201803306712, guid: 1d4399b298292134a91f0399af97542d, type: 3}

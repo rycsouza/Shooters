@@ -16,9 +16,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
     [SerializeField] private CharacterController _characterController;
     [SerializeField] private GameObject _playerHitImpact;
     [SerializeField] private GameObject _playerModel;
-    [SerializeField] private GameObject _canvasPlayerName;
     [SerializeField] private TMP_Text _playerName;
-    [SerializeField] private Transform _head, _endHead;
 
     [Header("Player Health")]
     [SerializeField] private int _maxHealth = 100;
@@ -57,14 +55,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
     private bool _overHeated;
 
     [Header("Audio")]
-    [SerializeField] private AudioSource _impactSound;
+    [SerializeField] private AudioSource _hitSound;
 
-    [Header("Drop")]
-    [SerializeField] private PowerUp[] _allDrops;
-    private int _selectedDrop;
-    #endregion
-
-    #region Native Functions
     private void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
@@ -116,11 +108,14 @@ public class PlayerController : MonoBehaviourPunCallbacks
             {
                 _cam.fieldOfView = _allGuns[_selectedGun].AdsZoom;
                 _gunHolder.position = _adsInPoint.position;
+                UIController.Instance.Crosshair.SetActive(true);
             }
             else
             {
                 _cam.fieldOfView = 60f;
                 _gunHolder.position = _adsOutPoint.position;
+
+                UIController.Instance.Crosshair.SetActive(_allGuns[_selectedGun].HasCrosshair);
             }
 
             _mouseSensitivity = UIController.Instance.MouseSensitivity.value;
@@ -334,31 +329,31 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     public void DropManager(PowerUp.Type type)
     {
-        if (!photonView.IsMine) return;
-        if (type == PowerUp.Type.Reload)
+        switch (type)
         {
-            foreach (Gun gun in _allGuns)
-            {
-                gun.HeatCounter = 0f;
-                gun.LastHeatCounter = 0f;
-                _overHeated = false;
-                UIController.Instance.Crosshair.GetComponent<Image>().sprite = UIController.Instance.CrosshairList[1];
-            }
-            return;
-        }
-        if (type == PowerUp.Type.Health)
-        {
-            if (_currentHealth < _maxHealth) _currentHealth = 30;
-            else if (_currentHealth == _maxHealth && _maxHealth < 150)
-            {
-                _maxHealth += 10;
-                UIController.Instance.HealthSlider.maxValue = _maxHealth;
-                _currentHealth = _maxHealth;
+            case PowerUp.Type.Health:
+                if (_currentHealth != _maxHealth && _currentHealth != 0)
+                {
+                    _currentHealth += 30;
+                }
+                else if (_currentHealth == _maxHealth && _currentHealth != 0 && _maxHealth <= 150)
+                {
+                    _maxHealth += 10;
+                    _currentHealth = _maxHealth;
+
+                    UIController.Instance.HealthSlider.maxValue = _maxHealth;
+                }
                 UIController.Instance.HealthSlider.value = _currentHealth;
                 UIController.Instance.HealthValue.text = _currentHealth.ToString();
-            }
-            else { return; }
-            return;
+                break;
+            case PowerUp.Type.Reload:
+                foreach (Gun gun in _allGuns)
+                {
+                    gun.LastHeatCounter = 0f;
+                    gun.HeatCounter = 0f;
+                    TemperatureManager();
+                }
+                break;
         }
     }
 
@@ -379,6 +374,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
             }
             UIController.Instance.HealthSlider.value = _currentHealth;
             UIController.Instance.HealthValue.text = _currentHealth.ToString();
+            if (!_hitSound.isPlaying) _hitSound.Play();
         }
     }
 

@@ -17,6 +17,7 @@ public class PowerUp : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            Debug.Log("Colisão");
             other.GetComponent<PlayerController>().DropManager(_powerUpType);
             Destroy(gameObject);
         }

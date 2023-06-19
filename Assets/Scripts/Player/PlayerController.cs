@@ -55,7 +55,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
     private bool _overHeated;
 
     [Header("Audio")]
-    [SerializeField] private AudioSource _hitSound;
+    [SerializeField] private AudioSource _impactSound;
 
     private void Start()
     {
@@ -198,35 +198,13 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            if (_allGuns[_selectedGun].name == "Gun 1 - ShotGun")
-            {
-                hit.distance = _allGuns[_selectedGun].ShootRange.position.x;
-                if (hit.collider.name != _allGuns[_selectedGun].ShootRange.name && hit.collider.gameObject.tag != "Player")
-                {
-                    for (int i = 1; i < _allTransforms.Length; i++)
-                    {
-
-                        GameObject bulletImpact = Instantiate(_bulletPrefab, (new Vector3(_allTransforms[i].position.x, _allTransforms[i].position.y, _allTransforms[i].position.z + 1f)) + (hit.normal * .002f), Quaternion.LookRotation(Vector3.forward, Vector3.up));
-
-                        Destroy(bulletImpact, 5f);
-                    }
-                }
-                else if(hit.collider.name != _allGuns[_selectedGun].ShootRange.name && hit.collider.gameObject.CompareTag("Player"))
-                {
-                    for (int i = 1; i < _allTransforms.Length; i++)
-                    {
-                        PhotonNetwork.Instantiate(_playerHitImpact.name, (new Vector3(_allTransforms[i].position.x, _allTransforms[i].position.y, _allTransforms[i].position.z + 1f)), Quaternion.identity);
-                    }
-                }
-
-            }
             if (hit.collider.gameObject.CompareTag("Player"))
             {
                 PhotonNetwork.Instantiate(_playerHitImpact.name, hit.point, Quaternion.identity);
 
                 hit.collider.gameObject.GetPhotonView().RPC("DealDamage", RpcTarget.All, photonView.Owner.NickName, _allGuns[_selectedGun].ShotDamage, PhotonNetwork.LocalPlayer.ActorNumber);
             }
-            else if (hit.collider.name != _allGuns[_selectedGun].ShootRange.name)
+            else
             {
                 GameObject bulletImpact = Instantiate(_bulletPrefab, hit.point + (hit.normal * .002f), Quaternion.LookRotation(Vector3.forward, Vector3.up));
 
@@ -367,14 +345,12 @@ public class PlayerController : MonoBehaviourPunCallbacks
             if (_currentHealth <= 0)
             {
                 _currentHealth = 0;
-                _selectedDrop = Random.Range(0, _allDrops.Length);
-                PlayerSpawner.Instance.Die(damager, _allDrops[_selectedDrop].gameObject);
+                PlayerSpawner.Instance.Die(damager);
 
                 MatchManager.Instance.UpdateStatsSend(actor, 0, 1);
             }
             UIController.Instance.HealthSlider.value = _currentHealth;
             UIController.Instance.HealthValue.text = _currentHealth.ToString();
-            if (!_hitSound.isPlaying) _hitSound.Play();
         }
     }
 

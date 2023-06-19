@@ -24,4 +24,16 @@ public class Gun : MonoBehaviour
         ShotDamage = _gunObject.ShotDamage;
         AdsZoom = _gunObject.AdsZoom;
     }
+
+    public void CallMuzzleFlash()
+    {
+        StartCoroutine(CouMuzzleFlash());
+    }
+
+    private IEnumerator CouMuzzleFlash()
+    {
+        MuzzleFlash.SetActive(true);
+        yield return new WaitForSeconds(0.01f);
+        MuzzleFlash.SetActive(false);
+    }
 }

@@ -9,11 +9,9 @@ public class PlayerSpawner : MonoBehaviour
 
     [SerializeField] private GameObject _playerPrefab;
     [SerializeField] private GameObject _deathEffect;
-    [SerializeField] private PowerUp[] _allDrops;
+    [SerializeField] private GameObject[] _allDrops;
 
     private GameObject _player;
-    private GameObject _drop;
-
 
     private void Awake()
     {
@@ -31,23 +29,26 @@ public class PlayerSpawner : MonoBehaviour
         _player = PhotonNetwork.Instantiate(_playerPrefab.name, spawnPoint.position, spawnPoint.rotation);
     }
 
-    public void Die(string damager, GameObject dropedItem)
+    public void Die(string damager)
     {
-        UIController.Instance.DeathText.text = "Voc� foi morto por: " + damager;
+        UIController.Instance.DeathText.text = "Você foi morto por: " + damager;
 
         MatchManager.Instance.UpdateStatsSend(PhotonNetwork.LocalPlayer.ActorNumber, 1, 1);
 
-        if (_player != null) StartCoroutine(DieCoroutine(dropedItem));
+        if (_player != null) StartCoroutine(DieCoroutine());
     }
 
-    public IEnumerator DieCoroutine(GameObject dropedItem)
+    public IEnumerator DieCoroutine()
     {
-        PhotonNetwork.Instantiate(_deathEffect.name, _player.transform.position, Quaternion.identity);
-        PhotonNetwork.Instantiate(_allDrops[Random.Range(0, _allDrops.Length)].name, _player.transform.position, _player.transform.rotation);
+        var playerPosition = _player.transform.position;
+        var playerRotation = _player.transform.rotation;
 
+        PhotonNetwork.Instantiate(_deathEffect.name, _player.transform.position, Quaternion.identity);
+        PhotonNetwork.Instantiate(_allDrops[Random.Range(0, _allDrops.Length)].name, playerPosition, playerRotation);
         PhotonNetwork.Destroy(_player);
         _player = null;
         UIController.Instance.DeathScreen.SetActive(true);
+
 
         yield return new WaitForSeconds(5f);
 

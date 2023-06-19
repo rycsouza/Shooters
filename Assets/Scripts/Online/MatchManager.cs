@@ -367,8 +367,8 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
         {
             if (player.name == otherPlayer.NickName)
             {
+                PhotonNetwork.DestroyPlayerObjects(otherPlayer.ActorNumber, false);
                 _allPlayers.Remove(player);
-                PhotonNetwork.DestroyPlayerObjects(otherPlayer);
             }
         }
     }

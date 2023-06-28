@@ -5,7 +5,15 @@ using UnityEngine;
 
 public class ShotAreaHandler : MonoBehaviour
 {
-    public List<PhotonView> PlayersDetected => _playersDetected;
+    public List<PhotonView> PlayersDetected
+    {
+        get
+        {
+            // Limpa a lista antes de retornar porque quando o inimigo morre, não executa o OnTriggerExit
+            _playersDetected = _playersDetected.FindAll((player) => player != null);
+            return _playersDetected;
+        }
+    }
 
     [Header("Debug")]
     [SerializeField] private List<PhotonView> _playersDetected;

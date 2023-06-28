@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: ShotGun
   m_EditorClassIdentifier: 
   TimeBetweenShot: 0.2
-  HeatPerShot: 7
+  HeatPerShot: 3
   IsAutomatic: 0
+  HasCrosshair: 1
   ShotDamage: 50
   AdsZoom: 60
-  HasCrosshair: 1

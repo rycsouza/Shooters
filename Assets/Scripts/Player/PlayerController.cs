@@ -191,28 +191,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     private void Shoot()
     {
-        _allGuns[_selectedGun].CallMuzzleFlash();
-
-        Ray ray = _cam.ViewportPointToRay(new Vector3(.5f, .5f, 0f));
-        ray.origin = _cam.transform.position;
-
-        if (Physics.Raycast(ray, out RaycastHit hit))
-        {
-            if (hit.collider.gameObject.CompareTag("Player"))
-            {
-                PhotonNetwork.Instantiate(_playerHitImpact.name, hit.point, Quaternion.identity);
-
-                hit.collider.gameObject.GetPhotonView().RPC("DealDamage", RpcTarget.All, photonView.Owner.NickName, _allGuns[_selectedGun].ShotDamage, PhotonNetwork.LocalPlayer.ActorNumber);
-            }
-            else
-            {
-                GameObject bulletImpact = Instantiate(_bulletPrefab, hit.point + (hit.normal * .002f), Quaternion.LookRotation(Vector3.forward, Vector3.up));
-
-                Destroy(bulletImpact, 5f);
-            }
-        }
-
-        _shotCounter = _allGuns[_selectedGun].TimeBetweenShot;
+        _shotCounter = _allGuns[_selectedGun].Shoot(_cam, _playerHitImpact, _bulletPrefab);
 
         _allGuns[_selectedGun].HeatCounter += _allGuns[_selectedGun].HeatPerShot;
         if (_allGuns[_selectedGun].HeatCounter >= _maxHeat)
@@ -223,8 +202,6 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
             UIController.Instance.Crosshair.GetComponent<Image>().sprite = UIController.Instance.CrosshairList[0];
         }
-        _allGuns[_selectedGun].ShotAudio.Stop();
-        _allGuns[_selectedGun].ShotAudio.Play();
     }
 
     private void VerifyCanShoot()

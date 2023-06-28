@@ -228,7 +228,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
             _allGuns[_selectedGun].HeatCounter = 0f;
             _overHeated = false;
 
-            UIController.Instance.Crosshair.GetComponent<Image>().sprite = UIController.Instance.CrosshairList[1];
+            UIController.Instance.Crosshair.GetComponent<Image>().sprite = _allGuns[_selectedGun].Crosshair;
+            UIController.Instance.Crosshair.GetComponent<Image>().SetNativeSize();
         }
 
         SwitchGun();

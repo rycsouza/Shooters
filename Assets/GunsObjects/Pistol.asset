@@ -10,11 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 40e2802f8756ebf43b3bdc0c03364c34, type: 3}
-  m_Name: MachineGun
+  m_Name: Pistol
   m_EditorClassIdentifier: 
   TimeBetweenShot: 0.1
-  HeatPerShot: 1.5
-  IsAutomatic: 1
+  HeatPerShot: 2
+  IsAutomatic: 0
   HasCrosshair: 1
-  ShotDamage: 35
-  AdsZoom: 45
+  Crosshair: {fileID: 21300000, guid: b524612ec1c9945428e2a746ee64c005, type: 3}
+  ShotDamage: 25
+  AdsZoom: 60

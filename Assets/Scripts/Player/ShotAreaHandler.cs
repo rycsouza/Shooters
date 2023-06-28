@@ -21,7 +21,13 @@ public class ShotAreaHandler : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Player"))
-            _playersDetected.Add(other.gameObject.GetPhotonView());
+        {
+            PhotonView player = other.gameObject.GetPhotonView();
+            if (!player.IsMine)
+            {
+                _playersDetected.Add(player);
+            }
+        }
     }
 
     private void OnTriggerExit(Collider other)

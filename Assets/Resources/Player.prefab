@@ -855,6 +855,7 @@ MonoBehaviour:
   HeatPerShot: 1
   IsAutomatic: 0
   HasCrosshair: 0
+  Crosshair: {fileID: 0}
   ShotDamage: 0
   AdsZoom: 0
   ShotAudio: {fileID: 1967029477444197384}
@@ -1108,6 +1109,7 @@ MonoBehaviour:
   HeatPerShot: 6
   IsAutomatic: 0
   HasCrosshair: 0
+  Crosshair: {fileID: 0}
   ShotDamage: 20
   AdsZoom: 60
   ShotAudio: {fileID: 1206136743023432675}
@@ -1278,6 +1280,7 @@ MonoBehaviour:
   HeatPerShot: 5
   IsAutomatic: 1
   HasCrosshair: 0
+  Crosshair: {fileID: 0}
   ShotDamage: 40
   AdsZoom: 30
   ShotAudio: {fileID: 4383365041143664675}
@@ -1449,6 +1452,7 @@ MonoBehaviour:
   HeatPerShot: 1.5
   IsAutomatic: 1
   HasCrosshair: 0
+  Crosshair: {fileID: 0}
   ShotDamage: 25
   AdsZoom: 45
   ShotAudio: {fileID: 1479753007986246945}

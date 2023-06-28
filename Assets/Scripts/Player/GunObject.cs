@@ -7,6 +7,7 @@ public class GunObject : ScriptableObject
 {
     public float TimeBetweenShot, HeatPerShot;
     public bool IsAutomatic, HasCrosshair;
+    public Sprite Crosshair;
     public int ShotDamage;
     public float AdsZoom;
 }

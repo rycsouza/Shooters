@@ -15,6 +15,7 @@ MonoBehaviour:
   TimeBetweenShot: 0.1
   HeatPerShot: 1.5
   IsAutomatic: 1
-  ShotDamage: 25
-  AdsZoom: 45
   HasCrosshair: 1
+  Crosshair: {fileID: 21300000, guid: b524612ec1c9945428e2a746ee64c005, type: 3}
+  ShotDamage: 35
+  AdsZoom: 45

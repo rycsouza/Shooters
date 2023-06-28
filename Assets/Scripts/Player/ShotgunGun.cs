@@ -19,21 +19,6 @@ public class ShotgunGun : Gun
             player.RPC("DealDamage", RpcTarget.All, photonView.Owner.NickName, ShotDamage, PhotonNetwork.LocalPlayer.ActorNumber);
         }
 
-        if (_shotArea.PlayersDetected.Count == 0)
-        {
-            Ray ray = _cam.ViewportPointToRay(new Vector3(.5f, .5f, 0f));
-            ray.origin = _cam.transform.position;
-
-            if (Physics.Raycast(ray, out RaycastHit hit))
-            {
-                if (!hit.collider.gameObject.CompareTag("Player"))
-                {
-                    GameObject bulletImpact = Instantiate(_bulletPrefab, hit.point + (hit.normal * .002f), Quaternion.LookRotation(Vector3.forward, Vector3.up));
-                    Destroy(bulletImpact, 5f);
-                }
-            }
-        }
-
         ShotAudio.Stop();
         ShotAudio.Play();
 

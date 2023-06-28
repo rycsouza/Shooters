@@ -9,6 +9,7 @@ public class Gun : MonoBehaviourPunCallbacks
     public GameObject MuzzleFlash;
     public float TimeBetweenShot = .1f, HeatPerShot = 1f;
     public bool IsAutomatic, HasCrosshair;
+    public Sprite Crosshair;
     public int ShotDamage;
     public float AdsZoom;
     public AudioSource ShotAudio;
@@ -23,6 +24,7 @@ public class Gun : MonoBehaviourPunCallbacks
         HeatPerShot = _gunObject.HeatPerShot;
         IsAutomatic = _gunObject.IsAutomatic;
         HasCrosshair = _gunObject.HasCrosshair;
+        Crosshair = _gunObject.Crosshair;
         ShotDamage = _gunObject.ShotDamage;
         AdsZoom = _gunObject.AdsZoom;
     }
@@ -52,7 +54,7 @@ public class Gun : MonoBehaviourPunCallbacks
 
         ShotAudio.Stop();
         ShotAudio.Play();
-        
+
         return TimeBetweenShot;
     }
 

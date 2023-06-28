@@ -15,8 +15,12 @@ public class ShotgunGun : Gun
 
         foreach (PhotonView player in _shotArea.PlayersDetected)
         {
-            PhotonNetwork.Instantiate(_playerHitImpact.name, player.transform.position, Quaternion.identity);
-            player.RPC("DealDamage", RpcTarget.All, photonView.Owner.NickName, ShotDamage, PhotonNetwork.LocalPlayer.ActorNumber);
+            Debug.DrawRay(transform.position, player.transform.position, Color.red);
+            if (Physics.Raycast(transform.position, player.transform.position))
+            {
+                PhotonNetwork.Instantiate(_playerHitImpact.name, player.transform.position, Quaternion.identity);
+                player.RPC("DealDamage", RpcTarget.All, photonView.Owner.NickName, ShotDamage, PhotonNetwork.LocalPlayer.ActorNumber);
+            }
         }
 
         ShotAudio.Stop();

@@ -61,6 +61,8 @@ public class MatchManager : MonoBehaviourPunCallbacks, IOnEventCallback
             NewPlayerSend(PhotonNetwork.NickName);
 
             State = GameStates.Playing;
+
+            AudioListener.volume = .1f;
         }
 
         SetupTimer();
